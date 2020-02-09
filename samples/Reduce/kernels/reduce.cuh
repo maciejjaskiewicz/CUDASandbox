@@ -2,10 +2,10 @@
 #include <cstdint>
 #include <vector>
 
+#include <CUDASandbox/metric.hpp>
+
 namespace reduce_gpu
 {
 	template<typename T>
-	void reduce_neighbored(const std::vector<T>& data, uint16_t block_size);
+	metric reduce_neighbored(const std::vector<T>& data, uint16_t block_size);
 }
-
-template void reduce_gpu::reduce_neighbored(const std::vector<int>& data, uint16_t block_size);

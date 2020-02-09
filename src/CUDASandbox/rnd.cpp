@@ -1,4 +1,4 @@
-#include "rnd.h"
+#include "rnd.hpp"
 #include <random>
 
 thread_local std::mt19937 gen{ std::random_device{}() };
@@ -14,3 +14,6 @@ T rnd::random(T min, T max)
 	
 	return dist{ min, max }(gen);
 }
+
+// Explicit instantiations
+template int rnd::random<int>(int min, int max);

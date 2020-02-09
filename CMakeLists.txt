@@ -12,10 +12,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Dependencies
 find_package(CUDA REQUIRED)
+include_directories("${CUDA_INCLUDE_DIRS}")
 
 # CPP Standard
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 11)
 
 add_subdirectory(src)
 add_subdirectory(samples)

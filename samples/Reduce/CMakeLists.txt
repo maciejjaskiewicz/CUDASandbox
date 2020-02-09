@@ -20,5 +20,6 @@ set_target_properties(${PROJECT_NAME}
     PROPERTIES CUDA_SEPARABLE_COMPILATION ON
     POSITION_INDEPENDENT_CODE ON
 )
+
 # Link libraries
 target_link_libraries(${PROJECT_NAME} PUBLIC CUDASandbox)
