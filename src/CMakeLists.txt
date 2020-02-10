@@ -1,4 +1,4 @@
-project(CUDASandbox LANGUAGES CXX CUDA)
+project(CUDASandbox LANGUAGES CXX)
 
 set(CSB_ROOT ${PROJECT_SOURCE_DIR}/CUDASandbox)
 

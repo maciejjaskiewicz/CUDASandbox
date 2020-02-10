@@ -1,13 +1,16 @@
 #include "metric.hpp"
 #include <cstdio>
+#include <type_traits>
 
-metric::metric(std::size_t size) 
-    : size_(size)
+template<typename TResult>
+metric<TResult>::metric(const std::size_t size) 
+    : size_(size), result_{}
 { }
 
-void metric::start(const metric_type metric_type)
+template<typename TResult>
+void metric<TResult>::start(const metric_type metric_type)
 {
-    const auto now = std::chrono::high_resolution_clock::now();
+    const auto now = std::chrono::system_clock::now();
 
     if(metric_type == metric_type::CALCULATION) 
     {
@@ -19,27 +22,42 @@ void metric::start(const metric_type metric_type)
     }
 }
 
-void metric::stop(const metric_type metric_type)
+template<typename TResult>
+void metric<TResult>::stop(const metric_type metric_type)
 {
-    const auto now = std::chrono::high_resolution_clock::now();
+    const auto now = std::chrono::system_clock::now();
 
     if(metric_type == metric_type::CALCULATION) 
     {
         const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - calculations_start_);
-        calculations_time_ = duration.count() / 1000.0;
+        calculations_time_ = duration.count();
     }
     else
     {
         const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - mem_transfer_start_);
-        mem_transfer_time_ = duration.count() / 1000.0;
+        mem_transfer_time_ = duration.count();
     }
 }
 
-void metric::serialize(const std::string& label) const
+template<typename TResult>
+void metric<TResult>::set_result(const TResult result)
 {
-    printf("[%s]\n", label.c_str());
-    printf(" - Problem size: n = %d\n", size_);
-    printf(" - Calculation time: %.10lf\n", calculations_time_);
-    printf(" - Memory transfer time: %.10lf\n", mem_transfer_time_);
-    printf(" - Total computation time: %.10lf\n", calculations_time_ + mem_transfer_time_);
+    result_ = result;
 }
+
+template<typename TResult>
+void metric<TResult>::serialize(const std::string& label) const
+{
+    printf("\033[1;33m[%s]\033[0m\n", label.c_str());
+    printf(" - Problem size: n = %zu\n", size_);
+    printf(" - Calculation time: %d ms\n", calculations_time_);
+    printf(" - Memory transfer time: %d ms\n", mem_transfer_time_);
+    printf(" - \033[1;31mTotal computation time: %d ms\033[0m\n", calculations_time_ + mem_transfer_time_);
+
+    if(std::is_same<TResult, int>())
+    {
+        printf(" - Computation result: %d\n", result_);
+    }
+}
+
+template class metric<int>;

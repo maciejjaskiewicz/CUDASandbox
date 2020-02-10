@@ -16,4 +16,4 @@ T rnd::random(T min, T max)
 }
 
 // Explicit instantiations
-template int rnd::random<int>(int min, int max);
+template CSB_API int rnd::random<int>(int min, int max);

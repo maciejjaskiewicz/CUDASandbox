@@ -5,10 +5,17 @@ set (REDUCE_SOURCES
 )
 
 set (REDUCE_CUDA_SOURCES
-    kernels/reduce.cu
     kernels/reduce.cuh
+    kernels/reduce_helpers.cuh
+    kernels/reduce_neighbored.cu
+    kernels/reduce_neighbored_imp.cu
+    kernels/reduce_interleaved.cu
+    kernels/reduce_unrolling_blocks.cu
+    kernels/reduce_unrolling_warps.cu
+    kernels/reduce_complete_unrolling.cu
 )
 
+set_source_files_properties(REDUCE_SOURCES PROPERTIES LANGUAGE CXX)
 set_source_files_properties(REDUCE_CUDA_SOURCES PROPERTIES LANGUAGE CUDA)
 
 # Define executable
