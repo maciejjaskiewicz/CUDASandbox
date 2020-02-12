@@ -32,11 +32,11 @@ __global__ void reduce_complete_unrolling_kernel(int* input, int* result, uint32
 }
 
 template<typename T>
-metric<T> reduce_gpu::reduce_complete_unrolling(const std::vector<T>& data, const uint16_t block_size)
+metric_with_result<T> reduce_gpu::reduce_complete_unrolling(const std::vector<T>& data, const uint16_t block_size)
 {
 	T* d_data;
 	T* d_result;
-	metric<T> metric(data.size());
+	metric_with_result<T> metric(data.size());
 
 	const dim3 block(block_size);
 	const dim3 grid(data.size() / block_size);
@@ -45,12 +45,12 @@ metric<T> reduce_gpu::reduce_complete_unrolling(const std::vector<T>& data, cons
 
 	metric.start(metric_type::CALCULATION);
     switch(block_size)
-    {
-        case 1024: reduce_complete_unrolling_kernel<1024><<<grid, block>>>(d_data, d_result, data.size()); break;
-        case 512: reduce_complete_unrolling_kernel<512><<<grid, block>>>(d_data, d_result, data.size()); break;
-        case 256: reduce_complete_unrolling_kernel<256><<<grid, block>>>(d_data, d_result, data.size()); break;
-        case 128: reduce_complete_unrolling_kernel<128><<<grid, block>>>(d_data, d_result, data.size()); break;
-    }
+	{
+		case 1024: reduce_complete_unrolling_kernel<1024><<<grid, block>>>(d_data, d_result, data.size()); break;
+		case 512: reduce_complete_unrolling_kernel<512><<<grid, block>>>(d_data, d_result, data.size()); break;
+		case 256: reduce_complete_unrolling_kernel<256><<<grid, block>>>(d_data, d_result, data.size()); break;
+		case 128: reduce_complete_unrolling_kernel<128><<<grid, block>>>(d_data, d_result, data.size()); break;
+	}
 	
 	GPU_ERR_CHECK(cudaDeviceSynchronize());
 	metric.stop(metric_type::CALCULATION);
@@ -64,4 +64,4 @@ metric<T> reduce_gpu::reduce_complete_unrolling(const std::vector<T>& data, cons
 }
 
 // Explicit instantiations
-template metric<int> reduce_gpu::reduce_complete_unrolling(const std::vector<int>& data, const uint16_t block_size);
+template metric_with_result<int> reduce_gpu::reduce_complete_unrolling(const std::vector<int>& data, const uint16_t block_size);

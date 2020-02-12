@@ -70,12 +70,12 @@ __global__ void reduce_unrolling_4blocks(int* input, int* result, uint32_t size)
 }
 
 template<typename T>
-metric<T> reduce_gpu::reduce_unrolling_blocks(const std::vector<T>& data, const uint16_t block_size, 
+metric_with_result<T> reduce_gpu::reduce_unrolling_blocks(const std::vector<T>& data, const uint16_t block_size,
     const uint8_t blocks_to_unroll)
 {
 	T* d_data;
 	T* d_result;
-	metric<T> metric(data.size());
+	metric_with_result<T> metric(data.size());
 
 	const dim3 block(block_size);
 	const dim3 grid((data.size() / block_size) / blocks_to_unroll);
@@ -103,5 +103,5 @@ metric<T> reduce_gpu::reduce_unrolling_blocks(const std::vector<T>& data, const 
 }
 
 // Explicit instantiations
-template metric<int> reduce_gpu::reduce_unrolling_blocks(const std::vector<int>& data, uint16_t block_size, 
+template metric_with_result<int> reduce_gpu::reduce_unrolling_blocks(const std::vector<int>& data, uint16_t block_size,
     const uint8_t blocks_to_unroll);

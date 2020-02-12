@@ -3,7 +3,7 @@ project(CUDASandbox LANGUAGES CXX)
 set(CSB_ROOT ${PROJECT_SOURCE_DIR}/CUDASandbox)
 
 set (CSB_SOURCES
-    ${CSB_ROOT}/core.hpp
+    # ${CSB_ROOT}/core.hpp
     ${CSB_ROOT}/gpu_assert.hpp
     ${CSB_ROOT}/rnd.hpp
     ${CSB_ROOT}/rnd.cpp
@@ -11,7 +11,7 @@ set (CSB_SOURCES
     ${CSB_ROOT}/metric.cpp
 )
 
-add_library(${PROJECT_NAME} SHARED ${CSB_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${CSB_SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CUDA_LIBRARIES})
 # set_target_properties(${PROJECT_NAME} 
 #     PROPERTIES CUDA_SEPARABLE_COMPILATION ON

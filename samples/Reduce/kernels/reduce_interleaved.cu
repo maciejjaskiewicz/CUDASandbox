@@ -27,11 +27,11 @@ __global__ void reduce_interleaved_pairs(int* input, int* result, uint32_t size)
 }
 
 template<typename T>
-metric<T> reduce_gpu::reduce_interleaved(const std::vector<T>& data, const uint16_t block_size)
+metric_with_result<T> reduce_gpu::reduce_interleaved(const std::vector<T>& data, const uint16_t block_size)
 {
 	T* d_data;
 	T* d_result;
-	metric<T> metric(data.size());
+	metric_with_result<T> metric(data.size());
 
 	const dim3 block(block_size);
 	const dim3 grid(data.size() / block_size);
@@ -52,4 +52,4 @@ metric<T> reduce_gpu::reduce_interleaved(const std::vector<T>& data, const uint1
 }
 
 // Explicit instantiations
-template metric<int> reduce_gpu::reduce_interleaved(const std::vector<int>& data, uint16_t block_size);
+template metric_with_result<int> reduce_gpu::reduce_interleaved(const std::vector<int>& data, uint16_t block_size);

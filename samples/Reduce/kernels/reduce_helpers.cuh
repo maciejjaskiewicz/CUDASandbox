@@ -6,9 +6,9 @@
 
 template<typename T>
 void init_device(T*& d_data, T*& d_result, const std::vector<T>& data, 
-	const std::size_t result_size, metric<T>& metric)
+	const std::size_t result_size, metric_with_result<T>& metric)
 {
-	metric.start(metric_type::MEMORY_TRANSFER);
+	metric.start(metric_type::HTD_MEMORY_TRANSFER);
 
 	const uint32_t data_byte_size = data.size() * sizeof(T);
 	const uint32_t result_byte_size = result_size * sizeof(T);
@@ -19,7 +19,7 @@ void init_device(T*& d_data, T*& d_result, const std::vector<T>& data,
 	GPU_ERR_CHECK(cudaMemcpy(d_data, data.data(), data_byte_size, cudaMemcpyHostToDevice));
 	GPU_ERR_CHECK(cudaMemset(d_result, 0, result_byte_size));
 
-	metric.stop(metric_type::MEMORY_TRANSFER);
+	metric.stop(metric_type::HTD_MEMORY_TRANSFER);
 }
 
 template<typename T>

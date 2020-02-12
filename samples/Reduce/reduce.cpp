@@ -6,9 +6,9 @@
 #include "kernels/reduce.cuh"
 
 template <typename T>
-metric<T> reduce_cpu(const std::vector<T>& data)
+metric_with_result<T> reduce_cpu(const std::vector<T>& data)
 {
-	metric<T> metric(data.size());
+	metric_with_result<T> metric(data.size());
 	T result = 0;
 
 	metric.start(metric_type::CALCULATION);
