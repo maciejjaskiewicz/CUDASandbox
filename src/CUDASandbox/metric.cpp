@@ -17,7 +17,7 @@ void metric::start(const metric_type metric_type)
 
     switch (metric_type)
     {
-	    case metric_type::CALCULATION:
+        case metric_type::CALCULATION:
             calculations_start_ = now;
             break;
         case metric_type::HTD_MEMORY_TRANSFER:

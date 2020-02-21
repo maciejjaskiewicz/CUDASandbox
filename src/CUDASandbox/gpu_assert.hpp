@@ -6,13 +6,13 @@
 
 inline void gpu_assert(const cudaError_t& code, const char *file, int line, bool abort = true)
 {
-	if(code != cudaSuccess)
-	{
-		fprintf(stderr, "GPU Assert: %s %s %d\n", cudaGetErrorString(code), file, line);
+    if(code != cudaSuccess)
+    {
+        fprintf(stderr, "GPU Assert: %s %s %d\n", cudaGetErrorString(code), file, line);
 
-		if(abort)
-		{
- 			exit(code);
-		}
-	}
+        if(abort)
+        {
+             exit(code);
+        }
+    }
 }

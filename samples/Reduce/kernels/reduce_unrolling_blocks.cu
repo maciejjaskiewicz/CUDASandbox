@@ -5,9 +5,9 @@
 
 __global__ void reduce_unrolling_2blocks(int* input, int* result, uint32_t size)
 {
-	const int tid = threadIdx.x;
+    const int tid = threadIdx.x;
     const int block_offset = blockDim.x * blockIdx.x * 2; // 2 blocks unrolling
-	const int index = block_offset + tid;
+    const int index = block_offset + tid;
 
     int* input_local = input + block_offset;
 
@@ -17,28 +17,28 @@ __global__ void reduce_unrolling_2blocks(int* input, int* result, uint32_t size)
     }
 
     __syncthreads();
-	
-	for(auto offset = blockDim.x / 2; offset > 0; offset /= 2)
-	{
-		if(tid < offset)
+    
+    for(auto offset = blockDim.x / 2; offset > 0; offset /= 2)
+    {
+        if(tid < offset)
         {
             input_local[tid] += input_local[tid + offset];
         }
 
-		__syncthreads();
-	}
+        __syncthreads();
+    }
 
-	if(tid == 0)
-	{
-		result[blockIdx.x] = input_local[0];
-	}
+    if(tid == 0)
+    {
+        result[blockIdx.x] = input_local[0];
+    }
 }
 
 __global__ void reduce_unrolling_4blocks(int* input, int* result, uint32_t size)
 {
-	const int tid = threadIdx.x;
+    const int tid = threadIdx.x;
     const int block_offset = blockDim.x * blockIdx.x * 4; // 4 blocks unrolling
-	const int index = block_offset + tid;
+    const int index = block_offset + tid;
 
     int* input_local = input + block_offset;
 
@@ -52,54 +52,54 @@ __global__ void reduce_unrolling_4blocks(int* input, int* result, uint32_t size)
     }
 
     __syncthreads();
-	
-	for(auto offset = blockDim.x / 2; offset > 0; offset /= 2)
-	{
-		if(tid < offset)
+    
+    for(auto offset = blockDim.x / 2; offset > 0; offset /= 2)
+    {
+        if(tid < offset)
         {
             input_local[tid] += input_local[tid + offset];
         }
 
-		__syncthreads();
-	}
+        __syncthreads();
+    }
 
-	if(tid == 0)
-	{
-		result[blockIdx.x] = input_local[0];
-	}
+    if(tid == 0)
+    {
+        result[blockIdx.x] = input_local[0];
+    }
 }
 
 template<typename T>
 metric_with_result<T> reduce_gpu::reduce_unrolling_blocks(const std::vector<T>& data, const uint16_t block_size,
     const uint8_t blocks_to_unroll)
 {
-	T* d_data;
-	T* d_result;
-	metric_with_result<T> metric(data.size());
+    T* d_data;
+    T* d_result;
+    metric_with_result<T> metric(data.size());
 
-	const dim3 block(block_size);
-	const dim3 grid((data.size() / block_size) / blocks_to_unroll);
+    const dim3 block(block_size);
+    const dim3 grid((data.size() / block_size) / blocks_to_unroll);
 
-	init_device(d_data, d_result, data, grid.x, metric);
+    init_device(d_data, d_result, data, grid.x, metric);
 
-	metric.start(metric_type::CALCULATION);
+    metric.start(metric_type::CALCULATION);
     if(blocks_to_unroll == 4)
     {
         reduce_unrolling_4blocks<<<grid, block>>>(d_data, d_result, data.size());
     }
-	else
+    else
     {
         reduce_unrolling_2blocks<<<grid, block>>>(d_data, d_result, data.size());
     }
-	GPU_ERR_CHECK(cudaDeviceSynchronize());
-	metric.stop(metric_type::CALCULATION);
+    GPU_ERR_CHECK(cudaDeviceSynchronize());
+    metric.stop(metric_type::CALCULATION);
 
-	T gpu_result = fetch_device_result(d_result, grid.x);
-	metric.set_result(gpu_result);
+    T gpu_result = fetch_device_result(d_result, grid.x);
+    metric.set_result(gpu_result);
 
-	GPU_ERR_CHECK(cudaDeviceReset());
+    GPU_ERR_CHECK(cudaDeviceReset());
 
-	return metric;
+    return metric;
 }
 
 // Explicit instantiations

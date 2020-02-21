@@ -6,7 +6,7 @@
 template<uint16_t blocks_size>
 __global__ void reduce_complete_unrolling_kernel(int* input, int* result, uint32_t size)
 {
-	const int tid = threadIdx.x;
+    const int tid = threadIdx.x;
     int* input_local = input + blockDim.x * blockIdx.x;
 
     if (blocks_size >= 1024) { if (tid < 512) { input_local[tid] += input_local[tid + 512]; } __syncthreads(); }
@@ -25,42 +25,42 @@ __global__ void reduce_complete_unrolling_kernel(int* input, int* result, uint32
         vsmem[tid] += vsmem[tid + 1];
     }
 
-	if(tid == 0)
-	{
-		result[blockIdx.x] = input_local[0];
-	}
+    if(tid == 0)
+    {
+        result[blockIdx.x] = input_local[0];
+    }
 }
 
 template<typename T>
 metric_with_result<T> reduce_gpu::reduce_complete_unrolling(const std::vector<T>& data, const uint16_t block_size)
 {
-	T* d_data;
-	T* d_result;
-	metric_with_result<T> metric(data.size());
+    T* d_data;
+    T* d_result;
+    metric_with_result<T> metric(data.size());
 
-	const dim3 block(block_size);
-	const dim3 grid(data.size() / block_size);
+    const dim3 block(block_size);
+    const dim3 grid(data.size() / block_size);
 
-	init_device(d_data, d_result, data, grid.x, metric);
+    init_device(d_data, d_result, data, grid.x, metric);
 
-	metric.start(metric_type::CALCULATION);
+    metric.start(metric_type::CALCULATION);
     switch(block_size)
-	{
-		case 1024: reduce_complete_unrolling_kernel<1024><<<grid, block>>>(d_data, d_result, data.size()); break;
-		case 512: reduce_complete_unrolling_kernel<512><<<grid, block>>>(d_data, d_result, data.size()); break;
-		case 256: reduce_complete_unrolling_kernel<256><<<grid, block>>>(d_data, d_result, data.size()); break;
-		case 128: reduce_complete_unrolling_kernel<128><<<grid, block>>>(d_data, d_result, data.size()); break;
-	}
-	
-	GPU_ERR_CHECK(cudaDeviceSynchronize());
-	metric.stop(metric_type::CALCULATION);
+    {
+        case 1024: reduce_complete_unrolling_kernel<1024><<<grid, block>>>(d_data, d_result, data.size()); break;
+        case 512: reduce_complete_unrolling_kernel<512><<<grid, block>>>(d_data, d_result, data.size()); break;
+        case 256: reduce_complete_unrolling_kernel<256><<<grid, block>>>(d_data, d_result, data.size()); break;
+        case 128: reduce_complete_unrolling_kernel<128><<<grid, block>>>(d_data, d_result, data.size()); break;
+    }
+    
+    GPU_ERR_CHECK(cudaDeviceSynchronize());
+    metric.stop(metric_type::CALCULATION);
 
-	T gpu_result = fetch_device_result(d_result, grid.x);
-	metric.set_result(gpu_result);
+    T gpu_result = fetch_device_result(d_result, grid.x);
+    metric.set_result(gpu_result);
 
-	GPU_ERR_CHECK(cudaDeviceReset());
+    GPU_ERR_CHECK(cudaDeviceReset());
 
-	return metric;
+    return metric;
 }
 
 // Explicit instantiations

@@ -36,7 +36,7 @@ public:
     metric_with_result(std::size_t size);
     void set_result(const TResult result);
 
-	void serialize(const std::string& label) const override;
+    void serialize(const std::string& label) const override;
 
 private:
     TResult result_;
